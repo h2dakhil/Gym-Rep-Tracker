@@ -46,7 +46,7 @@ Push everything to git in its step blocks.
 - [ ] Double-check all component footprints
 - [ ] Route PCB layout (2-layer)
 - [ ] Run DRC/ERC checks
-- [ ] Export Gerbers + order PCB
+- [ ] Export Gerbers + order PCB (Rememebr to also order kicad heart light)
 
 ---
 
