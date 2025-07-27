@@ -128,7 +128,7 @@
    4. If USB-C is removed → PMIC switches “SYS” to the battery, ensuring uninterrupted operation.  
 
 3. **3.3 V Regulation**  
-   1. PMIC “SYS” output (~3.7–4.2 V) feeds the LDO input.  
+   1. PMIC “SYS” output (~3.7–4.2 V for battery, regulated 4.4V for USBC) feeds the LDO input.  
    2. LDO drops “SYS” to a stable 3.3 V rail.  
    3. Decoupling capacitors at the LDO input and output smooth transients.  
    4. The 3.3 V rail powers:  
