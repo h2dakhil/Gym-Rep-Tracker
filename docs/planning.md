@@ -114,15 +114,7 @@
 > - Assumes MCU, OLED display, and IMU all operate at 3.3 V.  
 > - Assumes Li-Po battery pack includes a protection circuit.  
 > - Assumes PMIC supports USB-C CC negotiation, battery charging, and power-path switching.  
-> - USB-C D+ / D– are wired directly to the STM32’s USB_DP / USB_DM pins for DFU flashing and serial logging.
-
-
-## Detailed System Logic Flow
-
-> **Assumptions:**  
-> - MCU, OLED and IMU all run at 3.3 V  
-> - Li-Po pack includes its own protection circuit  
-> - PMIC handles USB-C CC negotiation, charging, and power-path switching  
+> - USB-C D+ / D– are wired directly to the STM32’s USB_DP / USB_DM pins for DFU flashing and serial logging. 
 
 1. **USB-C Plug-In & Power Negotiation**  
    1. User connects a USB-C cable → VBUS (5 V) appears at the connector.  
