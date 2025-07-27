@@ -30,6 +30,7 @@ Push everything to git in its step blocks.
 ---
 
 ## ✅ 2. Part Selection & BOM (2 days)
+**Look into prototyping the board using a breadboard and what is needed for that first
 
 - [ ] Choose exact STM32 chip (e.g. STM32F401CE)
 - [ ] Select IMU, display, BLE module, power ICs
