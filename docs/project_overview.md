@@ -11,19 +11,8 @@ A wearable gym-rep tracker that:
 Push everything to git in its step blocks. 
 ## ✅ 1. Planning & Requirements (2 days?)
 
-- [ ] List all system components:
-  - MCU (STM32)
-  - IMU (MPU6050 / ICM20948)
-  - Display (ST7789 / OLED)
-  - BLE module (e.g. HM-10 or ESP32)
-  - Battery + charging IC
-  - USB debug interface (UART–USB)
-  - Optional: EMG sensor (if analog)
-  - Buttons or input controls
+- [ ] List all system components
 - [ ] Decide on communication protocols for each component:
-  - I²C: IMU
-  - SPI: Display
-  - UART: BLE + Debug
 - [ ] Draw a **block diagram** of how everything connects
 - [ ] Sketch a rough 3D layout idea (screen, buttons, ports, casing)
 
@@ -111,5 +100,4 @@ Push everything to git in its step blocks.
 https://github.com/Hrushi-d/Gym-Exercise-RepCounter
 https://github.com/calumbruton/Vein
 
-📌 **Current Status:** Planning & research phase  
-🧠 **Next Step:** Block diagram + part selection
+At the end: Streamline all documentation planning into 1.
