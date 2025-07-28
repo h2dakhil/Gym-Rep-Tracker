@@ -30,7 +30,7 @@ Push everything to git in its step blocks.
 ---
 
 ## ✅ 3. Schematic & PCB Design (5 days?)
-
+- figure out what to do from here. Am I ordering the dev stuff or notfirst? am i doing firmware first?
 - [ ] Create schematic in KiCad
 - [ ] Annotate nets (3.3V, GND, I2C_SCL, SPI_MOSI, etc.)
 - [ ] Double-check all component footprints
