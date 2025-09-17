@@ -1,118 +1,79 @@
 # Gym Rep Tracker Firmware
 
-This project provides firmware for a wearable gym rep tracker using an STM32F103CBT6 microcontroller, MPU-6050 IMU, and SSD1306 OLED display.
+This directory contains the embedded firmware for a wrist-mounted rep tracker built around an **STM32F103CBT6 microcontroller**, **MPU-6050 IMU**, and **SSD1306 OLED display**.  
+The firmware implements sensor drivers, signal filtering, calibration, and a rep-detection algorithm tailored to multiple exercises.
+
+---
 
 ## Features
+- **Multi-Exercise Support**: Bicep Curl, Shoulder Press, Bench Press (extendable to more)
+- **State Machine Control**: Boot → Exercise Selection → Calibration → Detecting → Running
+- **Exercise-Specific Calibration**: Per-exercise baseline mean/std. deviation, with dynamic thresholds
+- **Rep Detection Algorithm**: Peak detection with prominence & refractory checks to prevent false counts
+- **Low-Pass Filtering**: Smooths accelerometer/gyroscope signals for robust detection
+- **OLED UI**: Displays splash, exercise selection, calibration state, rep counts, and status messages
+- **UART Debug Logging (optional)**: Real-time streaming of thresholds, IMU samples, and rep detection results
+- **Fallback Protection**: I²C bus initialization with automatic downgrade from fast to standard mode if needed
 
-- **Multi-Exercise Support**: Bicep Curl, Shoulder Press, and Bench Press
-- **Automatic Exercise Selection**: Cycles through exercises on boot with 2-second intervals
-- **Exercise-Specific Calibration**: Per-exercise baseline calibration for optimal detection
-- **Real-time Rep Counting**: Live rep detection and counting for each exercise
-- **OLED Display**: Clear exercise name and rep count display
+---
 
-## Build and Flash Instructions
+## Build & Flash Instructions
+1. **Install PlatformIO**: Install the PlatformIO extension in VS Code.  
+2. **Open Project**: Open the `Firmware/` directory.  
+3. **Build**:  
+   platformio run
 
-1. **Install PlatformIO:** If you don't have it already, install the PlatformIO extension in VS Code.
-2. **Open Project:** Open this project directory in VS Code.
-3. **Build:** Click the "Build" icon (checkmark) in the PlatformIO toolbar, or run `platformio run` in your terminal.
-4. **Flash:** Connect your STM32F103CBT6 board via an ST-Link debugger. Click the "Upload" icon (right arrow) in the PlatformIO toolbar, or run `platformio run -t upload`.
 
-## Wiring Summary
+or click the Build checkmark in the toolbar.
 
-- **MCU:** STM32F103CBT6
-- **IMU (MPU-6050) & OLED (SSD1306):** Share I2C1 bus.
-  - `PB6` -> `I2C1_SCL`
-  - `PB7` -> `I2C1_SDA`
-  - Connect `3.3V` to `VDD` of both MPU-6050 and SSD1306.
-  - Ensure appropriate pull-up resistors (e.g., 4.7kΩ) are connected from SCL and SDA to 3.3V if not already present on your modules.
-- **Optional UART Logging:**
-  - `PA2` -> `UART2_TX`
-  - `PA3` -> `UART2_RX`
+4. Flash: Upload to STM32F103CBT6 via ST-Link:
 
-## Exercise Selection and Operation
+# Wiring Summary
+- **MCU**: STM32F103CBT6  
+- **IMU (MPU-6050) & OLED (SSD1306)**: Shared I²C1 bus  
+  - PB6 → I2C1_SCL  
+  - PB7 → I2C1_SDA  
+  - Ensure 3.3 V supply and pull-ups (≈4.7kΩ) on SDA/SCL if not onboard  
+- **Optional UART Logging**:  
+  - PA2 → TX  
+  - PA3 → RX  
 
-### Boot Sequence
-1. **BOOT**: System initialization and splash screen
-2. **SELECTING_EXERCISE**: Auto-cycles through exercises every 2 seconds
-   - Bicep Curl → Shoulder Press → Bench Press
-   - After 6 seconds, automatically selects the current exercise
-3. **CALIBRATING_EXERCISE**: 2-second calibration for selected exercise
-4. **DETECTING**: 1-second warm-up window
-5. **RUNNING**: Live rep counting
+---
 
-### Exercise-Specific Signal Processing
+# Firmware Architecture
 
-- **Bicep Curl**: Horizontal motion projection (perpendicular to gravity)
-- **Shoulder Press**: Vertical motion projection (up-down movement against gravity)
-- **Bench Press**: Horizontal anterior-posterior projection (press direction)
+## Drivers
+- **mpu6050.c**: Initializes sensor, configures DLPF, handles calibration, scaling raw IMU data  
+- **ssd1306.c**: Minimal OLED driver with ASCII rendering and UI helpers  
+- **i2c_bus.c**: HAL wrapper for I²C; includes fallback from Fast Mode to Standard Mode  
 
-## How to Change Exercise Sensitivity
+## Core Logic
+- **imu_filters.c**: Applies low-pass filters, projects motion onto exercise-specific axes  
+- **rep_detect.c**: Maintains rolling mean/std. deviation buffer; detects peaks using thresholds  
+- **app_controller.c**: High-level state machine managing boot, calibration, detection, and UI updates  
+- **systick.c**: Millisecond tick counter for scheduling  
 
-Each exercise has its own tuning parameters in `include/exercise_config.h`:
+## UI
+- Displays splash, exercise name, calibration, live rep counts  
+- Text rendering with auto-centering and truncation  
 
-### Bicep Curl
-- `thresh_k`: 1.2 (threshold multiplier)
-- `min_prominence_g`: 0.40g (minimum peak prominence)
-- `refractory_ms`: 700ms (minimum time between reps)
+---
 
-### Shoulder Press
-- `thresh_k`: 1.1 (threshold multiplier)
-- `min_prominence_g`: 0.35g (minimum peak prominence)
-- `refractory_ms`: 800ms (minimum time between reps)
+# Adding a New Exercise
+1. Add a new entry in `include/exercise_config.h` with thresholds & refractory time.  
+2. Implement signal projection in `imu_filters.c`.  
+3. Update `app_controller.c` for name display and calibration needs.  
+4. Test & tune thresholds using UART logging.  
 
-### Bench Press
-- `thresh_k`: 1.1 (threshold multiplier)
-- `min_prominence_g`: 0.30g (minimum peak prominence)
-- `refractory_ms`: 900ms (minimum time between reps)
+---
 
-### Tuning Guidelines
+# Debug & Troubleshooting
 
-- **Shoulder Press**: If false positives, increase `min_prominence_g` to 0.45 or raise `refractory_ms` to 1000
-- **Bench Press**: If under-counting, lower `thresh_k` to 1.0 or reduce `min_prominence_g` to 0.25
-- **Bicep Curl**: Default settings should work well for most users
+## Enable Debug Mode
+- Define `ENABLE_LOG_UART` in `app_config.h` to stream real-time values at **115200 baud**.  
 
-## How to Add a New Exercise
-
-To add a new exercise:
-
-1. **Update `include/exercise_config.h`**:
-   - Add new exercise enum value
-   - Add configuration to `EX_CFG` table
-   - Define appropriate thresholds and timing
-
-2. **Update `src/sensing/imu_filters.c`**:
-   - Add new case in `imu_filters_compute_rep_signal()`
-   - Implement appropriate signal projection for the exercise
-
-3. **Update `src/app/app_controller.c`**:
-   - Add exercise name display
-   - Handle any exercise-specific calibration requirements
-
-4. **Test and Tune**:
-   - Use the calibration process to establish baseline
-   - Adjust thresholds based on detection accuracy
-
-## Advanced Features
-
-### UART Logging
-Enable detailed logging by uncommenting `#define ENABLE_LOG_UART` in `include/app_config.h`. This provides:
-- Sample values and thresholds
-- Peak detection decisions
-- Calibration data
-
-### Custom Calibration
-Each exercise gets its own baseline calibration during the `CALIBRATING_EXERCISE` state. The system:
-- Collects 2 seconds of IMU data
-- Computes mean and standard deviation
-- Uses dynamic thresholds: `baseline_mu + k * max(rolling_sigma, min_sigma_floor)`
-
-## Troubleshooting
-
-### Common Issues
-- **No reps detected**: Check calibration, reduce `thresh_k` or `min_prominence_g`
-- **False positives**: Increase `min_prominence_g` or `refractory_ms`
-- **Display issues**: Verify I2C connections and pull-up resistors
-- **IMU not responding**: Check power and I2C connections
-
-### Debug Mode
-Enable UART logging to see real-time sensor data and detection decisions. Connect a USB-to-UART converter to PA2/PA3 and monitor at 115200 baud.
+## Common Issues
+- **No reps detected** → lower `thresh_k` or `min_prominence_g`  
+- **False positives** → increase `min_prominence_g` or `refractory_ms`  
+- **IMU not responding** → check I²C wiring & power  
+- **Display issues** → confirm pull-ups on SDA/SCL  
