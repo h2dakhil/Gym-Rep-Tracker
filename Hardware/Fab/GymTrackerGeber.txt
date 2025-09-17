@@ -1,0 +1,14 @@
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-F_Cu.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-In1_Cu.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-In2_Cu.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-B_Cu.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-F_Paste.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-B_Paste.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-F_Silkscreen.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-B_Silkscreen.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-F_Mask.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-B_Mask.gbr'.
+Plotted to '/Users/hayadakhil/Desktop/GymDevice/GymDevice-Edge_Cuts.gbr'.
+Created Gerber job file '/Users/hayadakhil/Desktop/GymDevice/GymDevice-job.gbrjob'.
+Info: Done.
+Info: Done.
